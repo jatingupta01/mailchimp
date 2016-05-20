@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Dialog"
+    height="500"
+    title="Mailchimp Account Settings"
+    width="680"
+    xtype="dialog">
+    <items jcr:primaryType="cq:WidgetCollection">
+        <tabs jcr:primaryType="cq:TabPanel">
+            <items jcr:primaryType="cq:WidgetCollection">
+                <basic
+                    jcr:primaryType="nt:unstructured"
+                    title="Basic"
+                    xtype="panel">
+                    <items jcr:primaryType="cq:WidgetCollection">
+                        <accountDomain
+                            jcr:primaryType="cq:Widget"
+                            allowBlank="{Boolean}false"
+                            fieldDescription="Account Domain associated with this MailChimp  account."
+                            fieldLabel="MailChimp Account Domain"
+                            name="./accountDomain"
+                            xtype="textfield"/>
+                        <apiKey
+                            jcr:primaryType="cq:Widget"
+                            allowBlank="{Boolean}false"
+                            fieldDescription="API Key for accessing Mailchimp Account"
+                            fieldLabel="API Key"
+                            name="./apiKey"
+                            xtype="textfield"/>
+                        <apiUsername
+                            jcr:primaryType="cq:Widget"
+                            allowBlank="{Boolean}false"
+                            fieldDescription="API Username for accessing Mailchimp Account"
+                            fieldLabel="API Username"
+                            name="./apiUsername"
+                            xtype="textfield"/>
+                        <target
+                            jcr:primaryType="cq:Widget"
+                            fieldDescription="Please enter the path you want the asset to be created"
+                            fieldLabel="Target URL"
+                            name="./pollMailchimp/target"
+                            xtype="pathfield"/>
+                        <interval
+                            jcr:primaryType="cq:Widget"
+                            fieldDescription="Please enter the time interval for Poling (in seconds)"
+                            fieldLabel="Interval"
+                            name="./pollMailchimp/interval"
+                            xtype="numberfield"/>
+                        <source
+                            jcr:primaryType="cq:Widget"
+                            id="source"
+                            name="./pollMailchimp/source"
+                            xtype="hidden"/>
+                        <mimTypes
+                            jcr:primaryType="nt:unstructured"
+                            ignoreData="true"
+                            name="./pollMailchimp/jcr:mixinTypes"
+                            value="cq:PollConfig"
+                            xtype="hidden"/>
+                    </items>
+                </basic>
+            </items>
+        </tabs>
+    </items>
+    <listeners
+        jcr:primaryType="nt:unstructured"
+        beforeSubmit="function(dialog){&#xa;&#x9;var source = dialog.findById(&quot;source&quot;);&#xa;&#x9;if(source){&#xa;&#x9;&#x9;source.setValue(&quot;mailchimpListData:&quot; + dialog.path);&#xa;&#x9;}&#xa;}"/>
+</jcr:root>

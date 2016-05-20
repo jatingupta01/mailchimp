@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Dialog"
+    height="400"
+    stateful="false"
+    title="Settings"
+    xtype="dialog">
+    <items jcr:primaryType="cq:WidgetCollection">
+        <tabs
+            jcr:primaryType="cq:Widget"
+            xtype="tabpanel">
+            <items jcr:primaryType="cq:WidgetCollection">
+                <newsletter
+                    jcr:primaryType="cq:Widget"
+                    title="Email"
+                    xtype="panel">
+                    <items jcr:primaryType="cq:WidgetCollection">
+                        <main
+                            jcr:primaryType="cq:Widget"
+                            collapsed="{Boolean}false"
+                            collapsible="{Boolean}false"
+                            title=""
+                            xtype="dialogfieldset">
+                            <items jcr:primaryType="cq:WidgetCollection">
+                                <fromName
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Name that should appear as the sender of the newsletter."
+                                    fieldLabel="From Name"
+                                    name="./FromName"
+                                    allowBlank="{Boolean}false"
+                                    xtype="textfield"/>
+                                <fromAddress
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Mail address that should appear as the sender of the newsletter."
+                                    fieldLabel="From Address"
+                                    name="./from"
+                                    allowBlank="{Boolean}false"
+                                    xtype="textfield"/>
+                                <subject
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Subject of the newsletter."
+                                    fieldLabel="Subject"
+                                    name="./subject"
+                                    allowBlank="{Boolean}false"
+                                    xtype="textfield"/>
+                                <replyToAddress
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Mail address that should address replies for sent newsletter."
+                                    fieldLabel="Reply To"
+                                    name="./ReplyTo"
+                                    allowBlank="{Boolean}false"
+                                    xtype="textfield"/>
+                                <title
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Title of the Campaign"
+                                    fieldLabel="Title"
+                                    allowBlank="{Boolean}false"
+                                    name="./title"
+                                    xtype="textfield"/>
+                            </items>
+                        </main>
+                        <description_fieldset
+                            jcr:primaryType="cq:Widget"
+                            cls="cq-propsdialog-set-onofftime"
+                            collapsed="{Boolean}true"
+                            collapsible="{Boolean}true"
+                            title="Description"
+                            xtype="dialogfieldset">
+                            <items jcr:primaryType="cq:WidgetCollection">
+                                <description
+                                    jcr:primaryType="cq:Widget"
+                                    fieldLabel="Description"
+                                    hideLabel="{Boolean}true"
+                                    name="./jcr:description"
+                                    xtype="textarea"/>
+                            </items>
+                        </description_fieldset>
+                    </items>
+                </newsletter>
+                <cloudservices
+                    jcr:primaryType="cq:Widget"
+                    path="/apps/mailchimp/components/page/newsletterpage/tab_cloudservices.infinity.json"
+                    xtype="cqinclude"/>
+            </items>
+        </tabs>
+    </items>
+    <listeners
+        jcr:primaryType="nt:unstructured"
+        loadcontent="function(dialog){&#xa;var dialogRef = dialog&#xa;                            if(dialogRef &amp;&amp; dialogRef.path){&#xa;                                var dlgPath = dialogRef.path.replace(&quot;/jcr:content&quot;,&quot;&quot;);&#xa;                                var url = CQ.HTTP.noCaching(dlgPath + &quot;.cloudservices.json&quot;);&#xa;                                var response = CQ.HTTP.get(url);&#xa;                                if(response){&#xa;                                    var inheritData = CQ.HTTP.eval(response); &#xa;                                    if(inheritData){&#xa;                                        var configs = inheritData[&quot;cq:cloudserviceconfigs&quot;];&#xa;                                        if(configs){&#xa;                                            var configURL = &quot;&quot;;&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;var defaultPath = &quot;/etc/cloudservices/mailchimp&quot;;&#xa;                                            if($.isArray(configs)){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#xa;                                                $.each(configs, function( index, value ) {&#xa;                                                    if(value.indexOf(defaultPath) > -1){&#xa;&#xa;                                                        configURL = value;&#xa;                                                    }&#xa;                                                });&#xa;                                            }else{&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;if(configs.indexOf(defaultPath) > -1){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;configURL = configs;&#xa;                                                }&#xa;                                            }&#xa;                                            if(configURL.length > 0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;var listSelect = dialogRef.getField(&quot;./default-list&quot;);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;$.ajax({&#xa;                                                    url: '/services/mailchimp/import/lists?source=cloud&amp;path=' + configURL,&#xa;                                                    type: 'GET',&#xa;                                                    success: function(data){&#xa;                                                        if(data){&#xa;                                                            var jsonData = JSON.parse(data);&#xa;                                                            listSelect.reset();&#xa;                                                            listSelect.setOptions(jsonData);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;var listID = inheritData[&quot;default-list&quot;];&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;if( listID &amp;&amp; listID.length > 0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;listSelect.setValue(listID);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;listSelect.doLayout(false,false);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;}&#xa;                                                    },&#xa;                                                    error:function(data){&#xa;                                                        console.log(data);&#xa;                                                    }&#xa;                                                });&#xa;                                            }&#xa;                                        }&#xa;                                    }&#xa;&#xa;                                }&#xa;&#xa;                            }&#xa;}"/>
+</jcr:root>
