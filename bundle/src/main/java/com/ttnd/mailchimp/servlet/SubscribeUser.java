@@ -37,9 +37,8 @@ public class SubscribeUser extends SlingAllMethodsServlet {
             String emailID = request.getParameter("emailID");
             String[] listIDs = request.getParameterValues("listID");
             if(path != null){
-                Resource resource = jcrHelper.findResource(path);
-                if(resource != null && emailID != null 
-                		&& listIDs != null && listIDs.length > 0 && path != null){
+                if(emailID != null 
+                		&& listIDs != null && listIDs.length > 0){
                 	String configURL = "";
                     if(path.indexOf(",") > -1){
                        String[] configArray = path.split(",");

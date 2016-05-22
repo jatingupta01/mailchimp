@@ -122,9 +122,41 @@ public final class MailChimpUtil {
 	
 	public static JSONObject subscribeUser(String emailD, String[] lists, ValueMap config){
 		JSONObject jsonResponse = null;
-		/*
-			To Do
-		*/	
+		try {
+			JSONObject params = new JSONObject();
+			String s = HttpUtil.getHashString(emailD, "MD5");
+			if(s != null && lists != null && lists.length > 0 ){
+				JSONArray jsonArray = new JSONArray();
+				for (int i=0 ;i < lists.length; i++){
+					JSONObject obj = new JSONObject();
+					obj.put("method", "PUT");
+					String relativePath = "lists/" + lists[i] + "/members/" + s;
+					obj.put("path", relativePath);
+					JSONObject info = new JSONObject();
+					info.put("email_address", emailD);
+					info.put("status", Constants.SUSBSCRIBER_STATUS_PENDING);
+					obj.put("body", info.toString());
+					jsonArray.put(obj);
+				}
+				params.put("operations", jsonArray);
+				Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
+				Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
+				Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
+				if(domain != null && apikey != null && username != null) {
+					String listSubscribeBatchURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.BATCH_URL;
+					String response = HttpUtil.getHttpResponse(listSubscribeBatchURL, username.toString(), apikey.toString(), "POST", params);
+					try{
+						if(response != null){
+							jsonResponse = new JSONObject(response);
+						}
+					}catch(JSONException je){
+						je.printStackTrace();
+					}
+				}
+			}
+		}catch (JSONException e) {
+			e.printStackTrace();
+		}
 		return jsonResponse;
 	}
 
